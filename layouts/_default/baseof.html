@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Timeline Generator</title>
 
     {{ $variables := resources.Get "css/variables.css" }}
     {{ $base := resources.Get "css/base.css" }}
@@ -16,21 +15,29 @@
     
     {{ $css := slice $variables $base $terminal $typography $posts $code $tables $images | resources.Concat "css/style.css" | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+  </head>
+  <body>
+    <button id="login-btn" onclick="_login()">Log In</button>
+    <button id="logout-btn" onclick="logout()">Log Out</button>
+    
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
 
-    {{ with .Site.Params.favicon }}
-    <link rel="icon" type="image/x-icon" href="{{ . | relURL }}">
-    {{ end }}
-</head>
-<body>
-    <div id="terminal">
-        <div class="window-header">
-            <div class="window-button close"></div>
-            <div class="window-button minimize"></div>
-            <div class="window-button maximize"></div>
-        </div>
-        <div class="terminal-content">
-            {{ block "main" . }}{{ end }}
-        </div>
+    {{ $js := resources.Get "js/app.js" }}
+    <script src="{{ $js.RelPermalink }}"></script>
+
+    <div class="hidden" id="gated-content">
+      <p>
+        You're seeing this content because you're currently
+        <strong>logged in</strong>.
+      </p>
+      <label>
+        Access token:
+        <pre id="ipt-access-token"></pre>
+      </label>
+      <label>
+        User profile:
+        <pre id="ipt-user-profile"></pre>
+      </label>
     </div>
-</body>
+  </body>
 </html>
