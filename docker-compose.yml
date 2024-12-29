@@ -1,0 +1,23 @@
+services:
+  ssl-proxy:
+    image: jwilder/nginx-proxy
+    container_name: ssl-proxy
+    volumes:
+      - ~/certs/local:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    ports:
+      - "443:443"
+    depends_on:
+      - hugo
+
+  hugo:
+    image: klakegg/hugo:latest
+    container_name: hugo
+    volumes:
+      - .:/src
+    environment:
+      - VIRTUAL_HOST=local.abrahamsustaita.com
+      - HUGO_BASEURL=https://local.abrahamsustaita.com
+    command: server --bind 0.0.0.0 --port 1313 --baseURL "https://local.abrahamsustaita.com"
+
+
