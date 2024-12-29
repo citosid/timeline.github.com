@@ -1,0 +1,27 @@
+.input-label {
+  color: var(--comment);
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.input-field {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: inherit;
+  color: var(--foreground);
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  border-color: var(--blue);
+  outline: none;
+}
+
+textarea.input-field {
+  min-height: 80px;
+  resize: vertical;
+}
