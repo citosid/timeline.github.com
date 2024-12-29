@@ -60,12 +60,14 @@
   {{ $dom := resources.Get "js/utils/dom.js" }}
   {{ $timeline := resources.Get "js/modules/timeline.js" }}
   {{ $eventcard := resources.Get "js/components/eventcard.js" }}
+  {{ $timelineManager := resources.Get "js/timeline.manager.js" }}
   {{ $app := resources.Get "js/app.js" }}
 
   <script src="{{ $auth.RelPermalink }}" integrity="{{ $auth.Data.Integrity }}"></script>
   <script src="{{ $dom.RelPermalink }}" integrity="{{ $dom.Data.Integrity }}"></script>
   <script src="{{ $timeline.RelPermalink }}" integrity="{{ $timeline.Data.Integrity }}"></script>
   <script src="{{ $eventcard.RelPermalink }}" integrity="{{ $eventcard.Data.Integrity }}"></script>
+  <script src="{{ $timelineManager.RelPermalink }}" integrity="{{ $timelineManager.Data.Integrity }}"></script>
   <script src="{{ $app.RelPermalink }}" integrity="{{ $app.Data.Integrity }}"></script>
 
 </body>
