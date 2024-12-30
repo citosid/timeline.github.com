@@ -46,7 +46,9 @@ class TimelineManager {
     };
     l('timelineData', timelineData);
 
-    new TL.Timeline('timeline-embed', timelineData);
+    new TL.Timeline('timeline-embed', timelineData, {
+      is_embed: true,
+    });
   }
 
   saveTimeline() {

@@ -1,6 +1,6 @@
-baseURL = 'https://abrahamsustaita.com/'
+baseURL = 'https://timeline.abrahamsustaita.com/'
 languageCode = 'en-us'
-title = 'abrahamsustaita.com'
+title = 'Timeline Generator'
 
 [params]
   contentTypeName = "posts"
