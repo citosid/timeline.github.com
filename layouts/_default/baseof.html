@@ -55,17 +55,17 @@
     <div id="timeline-embed" style="width: 100%; height: 600px"></div>
   </div>
 
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
+  <!-- <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script> -->
   <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
 
-  {{ $auth := resources.Get "js/auth.js" }}
+  <!-- {{ $auth := resources.Get "js/auth.js" }} -->
   {{ $dom := resources.Get "js/utils/dom.js" }}
   {{ $timeline := resources.Get "js/modules/timeline.js" }}
   {{ $eventcard := resources.Get "js/components/eventcard.js" }}
   {{ $timelineManager := resources.Get "js/timeline.manager.js" }}
   {{ $app := resources.Get "js/app.js" }}
 
-  <script src="{{ $auth.RelPermalink }}" integrity="{{ $auth.Data.Integrity }}"></script>
+  <!-- <script src="{{ $auth.RelPermalink }}" integrity="{{ $auth.Data.Integrity }}"></script> -->
   <script src="{{ $dom.RelPermalink }}" integrity="{{ $dom.Data.Integrity }}"></script>
   <script src="{{ $timeline.RelPermalink }}" integrity="{{ $timeline.Data.Integrity }}"></script>
   <script src="{{ $eventcard.RelPermalink }}" integrity="{{ $eventcard.Data.Integrity }}"></script>

@@ -1,6 +1,6 @@
 .input-label {
   color: var(--comment);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   margin-bottom: 4px;
 }
@@ -11,7 +11,7 @@
   border-radius: 4px;
   padding: 6px 10px;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 14px;
   height: 30px;
   color: var(--foreground);
   transition: border-color 0.2s;
