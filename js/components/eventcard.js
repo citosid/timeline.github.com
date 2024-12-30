@@ -33,6 +33,15 @@ class EventCard {
   }
 
   createFields() {
+    const bceCheckboxAttributes = {
+      type: 'checkbox',
+      className: 'input-field compact',
+      id: 'bce-checkbox',
+    };
+    if (this.event.bce) {
+      bceCheckboxAttributes.checked = true;
+    }
+    this.bceCheckbox = _DOM.create('input', bceCheckboxAttributes);
     this.dateInput = _DOM.create('input', {
       type: 'date',
       className: 'input-field compact',
@@ -47,6 +56,7 @@ class EventCard {
       className: 'input-field compact',
       value: this.event.description,
     });
+    this.eventDescription.textContent = this.event.description;
     this.mediaUrl = _DOM.create('input', {
       type: 'text',
       className: 'input-field compact',
@@ -89,17 +99,18 @@ class EventCard {
     });
 
     return [
+      _DOM.createInputGroup('📜 BCE', this.bceCheckbox, this.bceLabel),
       _DOM.createInputGroup('📅 Date', this.dateInput),
       _DOM.createInputGroup('📰 Headline', this.evetnHeadline),
       _DOM.createInputGroup('📄 Description', this.eventDescription),
       _DOM.createInputGroup('🌐 Media URL', this.mediaUrl),
-      _DOM.createInputGroup('📝 Caption', this.mediaCaption),
-      _DOM.createInputGroup('🎨 Media Credit', this.mediaCredit),
-      _DOM.createInputGroup('📚 Group', this.eventGroup),
-      _DOM.createInputGroup('🏷 Tags', this.eventTags),
-      _DOM.createInputGroup('🔗 Link', this.eventLink),
+      // _DOM.createInputGroup('📝 Caption', this.mediaCaption),
+      // _DOM.createInputGroup('🎨 Media Credit', this.mediaCredit),
+      // _DOM.createInputGroup('📚 Group', this.eventGroup),
+      // _DOM.createInputGroup('🏷 Tags', this.eventTags),
+      // _DOM.createInputGroup('🔗 Link', this.eventLink),
       _DOM.createInputGroup('🎥 Background URL', this.eventBackground),
-      _DOM.createInputGroup('🎨 Background Color', this.eventBackgroundColor),
+      // _DOM.createInputGroup('🎨 Background Color', this.eventBackgroundColor),
     ];
   }
 
@@ -121,8 +132,9 @@ class EventCard {
       },
       background: {
         url: this.eventBackground.value,
-        color: this.eventBackgroundColor.value,
+        // color: this.eventBackgroundColor.value,
       },
+      bce: this.bceCheckbox.checked,
     });
   }
 }
