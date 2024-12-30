@@ -1,6 +1,6 @@
 .input-label {
   color: var(--comment);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   margin-bottom: 4px;
 }
@@ -9,16 +9,22 @@
   background-color: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   font-family: inherit;
+  font-size: 12px;
+  height: 30px;
   color: var(--foreground);
-  font-size: 14px;
   transition: border-color 0.2s;
 }
 
 .input-field:focus {
   border-color: var(--blue);
   outline: none;
+}
+
+.input-field.compact {
+  font-size: 12px;
+  padding: 6px 10px;
 }
 
 textarea.input-field {

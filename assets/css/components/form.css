@@ -2,11 +2,19 @@
   padding: 24px;
 }
 
+.timeline-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .event-card {
   background: var(--background);
+  background-color: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 16px;
+  padding: 12px;
   margin-bottom: 16px;
   transition: box-shadow 0.2s;
 }
@@ -19,13 +27,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .event-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.event-title {
+  font-size: 14px;
+  margin: 0;
 }
 
 .input-group {
