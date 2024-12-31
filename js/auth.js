@@ -1,86 +1,76 @@
 class AuthService {
-  constructor() {
-    this.tokenClient = null;
+  constructor(clientId) {
+    this.clientId = clientId;
     this.accessToken = null;
-
-    google.accounts.id.initialize({
-      client_id: CLIENT_ID,
-    });
+    this.tokenClient = null;
 
     this.loginElement = document.getElementById('login');
     this.logoutElement = document.getElementById('logout');
-
-    this.logedOutContent = document.getElementById('logged-out-content');
+    this.loggedOutContent = document.getElementById('logged-out-content');
     this.timelineForm = document.getElementById('timeline-form-container');
 
-    this.loginElement.addEventListener('click', async (event) => {
-      event.preventDefault();
-      await this.login();
-    });
-
-    this.logoutElement.addEventListener('click', async (event) => {
-      event.preventDefault();
-      await this.logout();
-    });
+    this.initAuth();
   }
 
-  userLoggedIn() {
-    this.loginElement.style.display = 'none';
-    this.logoutElement.style.display = 'block';
-
-    this.logedOutContent.style.display = 'none';
-    this.timelineForm.style.display = 'block';
+  initAuth() {
+    google.accounts.id.initialize({ client_id: this.clientId });
+    this.setupEventListeners();
   }
 
-  userLoggedOut() {
-    this.loginElement.style.display = 'block';
-    this.logoutElement.style.display = 'none';
+  setupEventListeners() {
+    this.loginElement.addEventListener('click', (e) => this.handleLogin(e));
+    this.logoutElement.addEventListener('click', (e) => this.handleLogout(e));
+  }
 
-    this.logedOutContent.style.display = 'block';
-    this.timelineForm.style.display = 'none';
+  async handleLogin(event) {
+    event.preventDefault();
+    await this.login();
+  }
+
+  async handleLogout(event) {
+    event.preventDefault();
+    this.logout();
+  }
+
+  toggleUI(isLoggedIn) {
+    this.loginElement.style.display = isLoggedIn ? 'none' : 'block';
+    this.logoutElement.style.display = isLoggedIn ? 'block' : 'none';
+    this.loggedOutContent.style.display = isLoggedIn ? 'none' : 'block';
+    this.timelineForm.style.display = isLoggedIn ? 'block' : 'none';
   }
 
   async isAccessTokenValid() {
-    // Check if the token is already available in the cookie
-    this.accessToken = document.cookie.match(/access_token=([^;]*)/)?.[1];
-
-    if (!this.accessToken) {
-      return false;
-    }
+    const token = this.getAccessTokenFromCookie();
+    if (!token) return false;
 
     const response = await fetch(
-      `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${this.accessToken}`
+      `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`
     );
 
-    if (!response.ok) {
-      // If the response is not OK, it means the token is invalid or expired
-      return false;
+    const isValid = response.ok && !(await response.json()).error_description;
+
+    if (isValid) {
+      this.accessToken = token;
+      this.setAccessToken(token);
     }
 
-    const data = await response.json();
-
-    // The data returned from the tokeninfo endpoint will contain information about the token
-    if (data.error_description) {
-      // If there is an error_description field, the token is invalid
-      return false;
-    }
-
-    // If the response does not have errors, the token is valid
-    return true;
+    return isValid;
   }
 
-  async login() {
-    return new Promise(async (resolve, reject) => {
+  getAccessTokenFromCookie() {
+    return document.cookie.match(/access_token=([^;]*)/)?.[1] || null;
+  }
+
+  login() {
+    return new Promise((resolve, reject) => {
       this.tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
+        client_id: this.clientId,
         scope: 'https://www.googleapis.com/auth/drive',
         callback: (tokenResponse) => {
           if (tokenResponse?.access_token) {
-            this.accessToken = tokenResponse.access_token;
-            // Store the token as a cookie
-            document.cookie = `access_token=${tokenResponse.access_token}`;
+            this.setAccessToken(tokenResponse.access_token);
             resolve(this.accessToken);
-            window.dispatchEvent(new Event('tl.loggedIn'));
+            window.dispatchEvent(new Event('auth.loggedIn'));
           } else {
             reject('Failed to obtain access token');
           }
@@ -91,21 +81,20 @@ class AuthService {
     });
   }
 
-  async logout() {
-    this.userLoggedOut();
+  setAccessToken(token) {
+    this.accessToken = token;
+    document.cookie = `access_token=${token}`;
+  }
+
+  logout() {
+    this.setAccessToken(null);
     document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
-    google.accounts.id.revoke(this.accessToken, (_response) => {});
+    google.accounts.id.revoke(this.accessToken, () => {});
+    this.toggleUI(false);
   }
 
   async getAccessToken() {
-    return new Promise(async (resolve, _reject) => {
-      if (await this.isAccessTokenValid()) {
-        resolve(this.accessToken);
-        return;
-      }
-
-      const accessToken = await this.login();
-      resolve(accessToken);
-    });
+    if (await this.isAccessTokenValid()) return this.accessToken;
+    return await this.login();
   }
 }

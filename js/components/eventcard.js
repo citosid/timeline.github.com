@@ -9,14 +9,14 @@ class EventCard {
     const card = _DOM.create('div', { className: 'event-card' });
 
     const header = _DOM.create('div', { className: 'event-header' }, [
-      _DOM.create('h3', { className: 'event-title' }, ['🗓 Details']),
+      _DOM.create('h3', { className: 'event-title' }, ['🗓 Historic Event Details']),
       _DOM.create(
         'button',
         {
           className: 'button danger',
           onClick: () => this.onRemove(this.element),
         },
-        ['❌']
+        ['🗑 Remove']
       ),
     ]);
 
@@ -99,17 +99,21 @@ class EventCard {
     });
 
     return [
-      _DOM.createInputGroup('📜 BCE', this.bceCheckbox, this.bceLabel),
-      _DOM.createInputGroup('📅 Date', this.dateInput),
-      _DOM.createInputGroup('📰 Headline', this.evetnHeadline),
-      _DOM.createInputGroup('📄 Description', this.eventDescription),
-      _DOM.createInputGroup('🌐 Media URL', this.mediaUrl),
+      // _DOM.createInputGroup('📜 BCE', []),
+      _DOM.createInputGroup('📜 BCE', [
+        this.bceCheckbox,
+        _DOM.create('label', { className: 'input-label' }, ['📅 Date']),
+        this.dateInput,
+      ]),
+      _DOM.createInputGroup('📰 Title', [this.evetnHeadline]),
+      _DOM.createInputGroup('📄 Desc:', [this.eventDescription]),
+      _DOM.createInputGroup('🌐 Image', [this.mediaUrl]),
       // _DOM.createInputGroup('📝 Caption', this.mediaCaption),
       // _DOM.createInputGroup('🎨 Media Credit', this.mediaCredit),
       // _DOM.createInputGroup('📚 Group', this.eventGroup),
       // _DOM.createInputGroup('🏷 Tags', this.eventTags),
       // _DOM.createInputGroup('🔗 Link', this.eventLink),
-      _DOM.createInputGroup('🎥 Background URL', this.eventBackground),
+      _DOM.createInputGroup('🎥 Background', [this.eventBackground]),
       // _DOM.createInputGroup('🎨 Background Color', this.eventBackgroundColor),
     ];
   }

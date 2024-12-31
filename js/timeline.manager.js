@@ -1,84 +1,25 @@
 class TimelineManager {
   constructor(googleDriveService) {
     this.googleDriveService = googleDriveService;
-
     this.events = [];
-    this.container = document.getElementById('events-container');
-
-    this.backButtonElement = document.getElementById('back-button');
-
-    this.timelinesListElement = document.getElementById('timelines-list');
-
-    this.timelineNameElement = document.getElementById('timeline-name');
-    this.formElement = document.getElementById('timeline-form');
-
-    this.addEventElement = document.getElementById('add-event');
-
-    this.generateTimelineElement = document.getElementById('generate-timeline');
-
-    this.timelineTitleElement = document.getElementById('timeline-title');
-    this.timelineDescElement = document.getElementById('timeline-desc');
-
-    this.timelineParsedElement = document.getElementById('timeline-parsed');
-
-    this.closeTimelineParsedElement = document.getElementById('close-timeline-parsed');
-
     this.timelineBeingWorkedOn = null;
 
+    this.initUIElements();
     this.setupEventListeners();
   }
 
-  async loadTimelines() {
-    const timelines = await this.googleDriveService.listTimelines();
-
-    this.timelinesListElement.innerHTML = '';
-
-    const newTimelineLink = _DOM.create(
-      'a',
-      {
-        href: '',
-        className: 'button secondary timeline-item',
-      },
-      ['🆕 New Timeline']
-    );
-    newTimelineLink.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.loadEmptyTimeline();
-    });
-    this.timelinesListElement.appendChild(newTimelineLink);
-
-    timelines.forEach((timeline) => {
-      const link = _DOM.create(
-        'a',
-        {
-          href: '',
-          className: 'button timeline-item',
-        },
-        [`📝 ${timeline.name}`]
-      );
-
-      link.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await this.loadTimeline(timeline);
-        this.formElement.style.display = 'block';
-        this.timelinesListElement.style.display = 'none';
-      });
-
-      this.timelinesListElement.appendChild(link);
-    });
-  }
-
-  addEvent(eventData = null) {
-    const event = eventData ? TimelineEvent.fromJSON(eventData) : new TimelineEvent();
-    const card = new EventCard(event, (element) => this.removeEvent(element));
+  addEvent() {
+    const event = new TimelineEvent(); // Implement TimelineEvent class elsewhere
+    const card = new EventCard(event, (el) => this.removeEvent(el));
     this.events.push(card);
     this.container.appendChild(card.element);
   }
 
   async backupTimeline() {
+    this.loadingSpinner.style.display = 'block';
     await this.googleDriveService.ensureFolderExists('Timeline');
 
-    let fileName = `${this.timelineTitleElement.value.replace(/\s/g, '-')}.json`;
+    let fileName = `${this.timelineTitle.value.replace(/\s/g, '-')}.json`;
 
     if (this.timelineBeingWorkedOn) {
       fileName = this.timelineBeingWorkedOn.name;
@@ -87,8 +28,8 @@ class TimelineManager {
     const fileId = await this.googleDriveService.uploadFile(fileName, {
       title: {
         text: {
-          headline: this.timelineTitleElement.value,
-          text: this.timelineDescElement.value,
+          headline: this.timelineTitle.value,
+          text: this.timelineDesc.value,
         },
       },
       events: this.events.map((card) => card.getData().toJSON()),
@@ -98,29 +39,115 @@ class TimelineManager {
       id: fileId,
       name: fileName,
     };
+    this.loadingSpinner.style.display = 'none';
   }
 
-  setupEventListeners() {
-    this.backButtonElement.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.formElement.style.display = 'none';
-      this.timelinesListElement.style.display = 'grid';
-      this.timelinebeingWorkedOn = null;
-      this.timelinesListElement.innerHTML = 'Loading your timelines... ⏳';
-      this.loadTimelines();
+  closeParsedTimeline() {
+    this.timelineParsed.style.display = 'none';
+  }
+
+  createLink(text, onClick) {
+    const link = document.createElement('a');
+    link.href = '';
+    link.className = 'button';
+    link.textContent = text;
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      onClick();
     });
-    this.formElement.addEventListener('change', (_event) => this.backupTimeline());
-    this.addEventElement.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.addEvent();
+    return link;
+  }
+
+  generateTimeline(event) {
+    event.preventDefault();
+    this.timelineParsed.style.display = 'block';
+    const timelineData = {
+      events: this.events.map((card) => card.getData().toJSON()),
+      title: {
+        text: {
+          headline: this.timelineTitle.value,
+          text: this.timelineDesc.value,
+        },
+      },
+    };
+    new TL.Timeline('timeline-embed', timelineData, { is_embed: true });
+  }
+
+  initUIElements() {
+    this.addEventButton = document.getElementById('add-event');
+    this.backButton = document.getElementById('back-button');
+    this.closeTimelineParsed = document.getElementById('close-timeline-parsed');
+    this.container = document.getElementById('events-container');
+    this.form = document.getElementById('timeline-form');
+    this.generateTimelineAction = document.getElementById('generate-timeline-action');
+    this.generateTimelineButtons = document.getElementsByClassName('generate-timeline');
+    this.loadingSpinner = document.getElementById('loading-spinner');
+    this.timelineList = document.getElementById('timelines-list');
+    this.timelineName = document.getElementById('timeline-name');
+    this.timelineTitle = document.getElementById('timeline-title');
+    this.timelineDesc = document.getElementById('timeline-desc');
+    this.timelineParsed = document.getElementById('timeline-parsed');
+  }
+
+  handleBackButtonClick() {
+    this.form.style.display = 'none';
+    this.timelineList.style.display = 'grid';
+    this.timelineBeingWorkedOn = null;
+    this.generateTimelineAction.style.display = 'none';
+    this.loadTimelines();
+  }
+
+  loadEmptyTimeline() {
+    this.timelineTitle.value = '';
+    this.timelineDesc.value = '';
+    this.events = [];
+    this.container.innerHTML = '';
+    this.timelineBeingWorkedOn = null;
+    this.form.style.display = 'block';
+    this.timelineList.style.display = 'none';
+    this.addEvent();
+  }
+  async loadTimeline(timeline) {
+    this.loadingSpinner.style.display = 'block';
+    const data = await this.googleDriveService.readFile(timeline);
+    this.populateTimelineData(data);
+    this.loadingSpinner.style.display = 'none';
+    this.generateTimelineAction.style.display = 'block';
+  }
+
+  async loadTimelines() {
+    this.loadingSpinner.style.display = 'block';
+    const timelines = await this.googleDriveService.listTimelines();
+    this.timelineList.innerHTML = '';
+
+    const newTimelineLink = this.createLink('🆕 New Timeline', () => this.loadEmptyTimeline());
+    this.timelineList.appendChild(newTimelineLink);
+
+    timelines.forEach((timeline) => {
+      const link = this.createLink(`📝 ${timeline.name}`, async () => {
+        await this.loadTimeline(timeline);
+        this.form.style.display = 'block';
+        this.timelineList.style.display = 'none';
+      });
+      this.timelineList.appendChild(link);
     });
-    this.generateTimelineElement.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.generateTimeline();
-    });
-    this.closeTimelineParsedElement.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.timelineParsedElement.style.display = 'none';
+    this.loadingSpinner.style.display = 'none';
+  }
+
+  populateTimelineData(timelineData) {
+    this.timelineBeingWorkedOn = timelineData;
+    const data = timelineData.data;
+
+    this.timelineName.textContent = `${data.title.text.headline} 📜 ${timelineData.name}`;
+
+    this.timelineTitle.value = data.title.text.headline;
+    this.timelineDesc.value = data.title.text.text;
+    this.container.innerHTML = '';
+    this.events = data.events.map((eventData) => {
+      const event = TimelineEvent.fromJSON(eventData); // Implement fromJSON
+      const card = new EventCard(event, (el) => this.removeEvent(el)); // Implement EventCard
+      this.container.appendChild(card.element);
+      return card;
     });
   }
 
@@ -129,56 +156,13 @@ class TimelineManager {
     this.events = this.events.filter((event) => event.element !== element);
   }
 
-  generateTimeline() {
-    this.timelineParsedElement.style.display = 'block';
-    const timelineData = {
-      events: this.events.map((card) => {
-        return card.getData().toJSON();
-      }),
-      title: {
-        text: {
-          headline: this.timelineTitleElement.value,
-          text: this.timelineDescElement.value,
-        },
-      },
-    };
-
-    new TL.Timeline('timeline-embed', timelineData, {
-      is_embed: true,
+  setupEventListeners() {
+    this.backButton.addEventListener('click', () => this.handleBackButtonClick());
+    this.addEventButton.addEventListener('click', () => this.addEvent());
+    this.closeTimelineParsed.addEventListener('click', () => this.closeParsedTimeline());
+    this.form.addEventListener('change', (_event) => this.backupTimeline());
+    Array.from(this.generateTimelineButtons).forEach((button) => {
+      button.addEventListener('click', (e) => this.generateTimeline(e));
     });
-  }
-
-  loadEmptyTimeline() {
-    this.timelineTitleElement.value = '';
-    this.timelineDescElement.value = '';
-    this.events = [];
-    this.container.innerHTML = '';
-    this.timelineBeingWorkedOn = null;
-    this.formElement.style.display = 'block';
-    this.timelinesListElement.style.display = 'none';
-
-    this.addEvent();
-  }
-
-  async loadTimeline(timeline) {
-    this.timelineBeingWorkedOn = timeline;
-    const timelineData = await this.googleDriveService.readFile(timeline);
-    const data = timelineData.data;
-
-    if (data?.title?.text) {
-      this.timelineTitleElement.value = data.title.text.headline || '';
-      this.timelineDescElement.value = data.title.text.text || '';
-      this.timelineNameElement.children[0].textContent = `${data.title.text.headline} (${timeline.name})`;
-    }
-
-    if (data?.events) {
-      this.container.innerHTML = ''; // Clear existing events in the container
-      this.events = data.events.map((eventData) => {
-        const timelineEvent = TimelineEvent.fromJSON(eventData);
-        const eventCard = new EventCard(timelineEvent, (element) => this.removeEvent(element));
-        this.container.appendChild(eventCard.element); // Append the new EventCard to the container
-        return eventCard;
-      });
-    }
   }
 }

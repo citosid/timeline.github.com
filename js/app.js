@@ -1,21 +1,19 @@
 l = console.log;
 
 window.onload = async () => {
-  authService = new AuthService();
-
-  googleDriveService = new GoogleDriveService(authService);
-
-  window.timeline = new TimelineManager(googleDriveService);
+  const authService = new AuthService(CLIENT_ID);
+  const googleDriveService = new GoogleDriveService(authService);
+  const timelineManager = new TimelineManager(googleDriveService);
 
   if (await authService.isAccessTokenValid()) {
-    authService.userLoggedIn();
-    await authService.getAccessToken();
-    await window.timeline.loadTimelines();
+    authService.toggleUI(true);
+    await googleDriveService.ensureFolderExists('Timeline');
+    await timelineManager.loadTimelines();
   }
 
-  window.addEventListener('tl.loggedIn', async () => {
-    authService.userLoggedIn();
-    await authService.getAccessToken();
-    await window.timeline.loadTimelines();
+  window.addEventListener('auth.loggedIn', async () => {
+    authService.toggleUI(true);
+    await googleDriveService.ensureFolderExists('Timeline');
+    await timelineManager.loadTimelines();
   });
 };

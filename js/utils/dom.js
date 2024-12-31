@@ -20,10 +20,10 @@ const _DOM = {
     return element;
   },
 
-  createInputGroup(label, input) {
+  createInputGroup(label, inputs) {
     return _DOM.create('div', { className: 'input-group' }, [
       _DOM.create('label', { className: 'input-label' }, [label]),
-      input,
+      ...inputs,
     ]);
   },
 };
