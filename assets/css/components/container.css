@@ -51,11 +51,12 @@
 }
 
 #loading-spinner {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  position: relative;
   animation: spinning-wheel 0.5s linear infinite;
+  border-radius: 50%;
+  height: 30px;
+  position: fixed;
+  right: 156px;
+  width: 30px;
 }
 
 #loading-spinner::before,

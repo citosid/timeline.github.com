@@ -14,7 +14,12 @@ class EventCard {
         'button',
         {
           className: 'button danger',
-          onClick: () => this.onRemove(this.element),
+          onClick: (e) => {
+            e.preventDefault();
+            if (window.confirm('Are you sure you want to remove this event?')) {
+              this.onRemove(this.element);
+            }
+          },
         },
         ['🗑 Remove']
       ),
@@ -107,13 +112,17 @@ class EventCard {
       ]),
       _DOM.createInputGroup('📰 Title', [this.evetnHeadline]),
       _DOM.createInputGroup('📄 Desc:', [this.eventDescription]),
-      _DOM.createInputGroup('🌐 Image', [this.mediaUrl]),
+      _DOM.createInputGroup('🌐 Image', [
+        this.mediaUrl,
+        _DOM.create('label', { className: 'input-label' }, ['🎥 Background']),
+        this.eventBackground,
+      ]),
+      // _DOM.createInputGroup('🎥 Background', [this.eventBackground]),
       // _DOM.createInputGroup('📝 Caption', this.mediaCaption),
       // _DOM.createInputGroup('🎨 Media Credit', this.mediaCredit),
       // _DOM.createInputGroup('📚 Group', this.eventGroup),
       // _DOM.createInputGroup('🏷 Tags', this.eventTags),
       // _DOM.createInputGroup('🔗 Link', this.eventLink),
-      _DOM.createInputGroup('🎥 Background', [this.eventBackground]),
       // _DOM.createInputGroup('🎨 Background Color', this.eventBackgroundColor),
     ];
   }
