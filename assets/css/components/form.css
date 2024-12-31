@@ -1,5 +1,6 @@
 .timeline-form {
   padding: 24px;
+  animation: all 0.2s;
 }
 
 .timeline-header {

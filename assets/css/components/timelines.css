@@ -1,0 +1,12 @@
+.timelines-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.timeline-item {
+  text-decoration: none;
+  cursor: pointer;
+}

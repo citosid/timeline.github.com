@@ -10,8 +10,9 @@
     {{ $form := resources.Get "css/components/form.css" }}
     {{ $inputs := resources.Get "css/components/inputs.css" }}
     {{ $buttons := resources.Get "css/components/buttons.css" }}
+    {{ $timelines := resources.Get "css/components/timelines.css" }}
     
-    {{ $css := slice $variables $base $container $titlebar $form $inputs $buttons | resources.Concat "css/style.css" | minify | fingerprint }}
+    {{ $css := slice $variables $base $container $titlebar $form $inputs $buttons $timelines | resources.Concat "css/style.css" | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 
   <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
@@ -26,48 +27,72 @@
         <div class="title-button close"></div>
       </div>
       <div class="title-text">Timeline Generator</div>
+      <div class="title-actions">
+          <button id="logout" class="button secondary logout" style="display: none;"> 🚪 Logout</button>
+          <button id="login" class="button secondary login"> 🔐 Login</button>
+      </div>
     </div>
 
-    <div class="timeline-form">
-      <div class="timeline-header">
-        <div class="input-group">
-          <label class="input-label" for="timeline-title"> 📅 Timeline Headline</label>
-          <input type="text" id="timeline-title" class="input-field">
+    <div id="logged-out-content">
+        <h1>👋 Welcome to Timeline Generator</h1>
+        <p>Timeline Generator is a tool to help you organize your ideas and thoughts into a structured timeline.</p>
+        <p>To get started, you'll need to login to your Google account. This will allow Timeline Generator to access your Google Drive and create new timelines.</p>
+    </div>
+
+    <div id="timeline-form-container" class="timeline-form" style="display: none;">
+      <div id="timelines-list" class="timelines-list">Loading your timelines... ⏳</div>
+
+      <form id="timeline-form" action="#" style="display: none;">
+
+        <div id="back-button" class="button danger">← Back</div>
+        <h3 id="timeline-name">Editing file: <span></span></h3>
+
+        <div class="timeline-header">
+          <div class="input-group">
+            <label class="input-label" for="timeline-title"> 📅 Timeline Headline</label>
+            <input type="text" id="timeline-title" class="input-field">
+          </div>
+      
+          <div class="input-group">
+            <label class="input-label" for="timeline-desc">Timeline Description</label>
+            <textarea id="timeline-desc" class="input-field"></textarea>
+          </div>
         </div>
-    
-        <div class="input-group">
-          <label class="input-label" for="timeline-desc">Timeline Description</label>
-          <textarea id="timeline-desc" class="input-field"></textarea>
+
+        <div id="events-container"></div>
+
+        <div class="button-group">
+          <button id="add-event" class="button">Add Event</button>
+          <button id="generate-timeline" class="button secondary">Generate Timeline</button>
         </div>
       </div>
 
-      <div id="events-container"></div>
-
-      <div class="button-group">
-        <button id="add-event" class="button">Add Event</button>
-        <button id="generate-timeline" class="button">Generate Timeline</button>
-        <button id="save-timeline" class="button secondary">Save Timeline</button>
-        <button onclick="document.getElementById('load-file').click()" class="button secondary">Load Timeline</button>
-        <input type="file" id="load-file" accept="application/json" style="display: none">
-      </div>
-    </div>
+    </form>
 
     <div id="timeline-embed" style="width: 100%; height: 600px"></div>
   </div>
 
-  <!-- <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script> -->
-  <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+  <script>
+    const CLIENT_ID = '{{ .Site.Params.googleClientId }}';
+  </script>
 
-  <!-- {{ $auth := resources.Get "js/auth.js" }} -->
+  <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  {{ $auth := resources.Get "js/auth.js" }}
   {{ $dom := resources.Get "js/utils/dom.js" }}
   {{ $timeline := resources.Get "js/modules/timeline.js" }}
+  {{ $googleDrive := resources.Get "js/modules/google-drive.js" }}
+  {{ $store := resources.Get "js/modules/store.js" }}
   {{ $eventcard := resources.Get "js/components/eventcard.js" }}
   {{ $timelineManager := resources.Get "js/timeline.manager.js" }}
   {{ $app := resources.Get "js/app.js" }}
 
-  <!-- <script src="{{ $auth.RelPermalink }}" integrity="{{ $auth.Data.Integrity }}"></script> -->
+  <script src="{{ $auth.RelPermalink }}" integrity="{{ $auth.Data.Integrity }}"></script>
   <script src="{{ $dom.RelPermalink }}" integrity="{{ $dom.Data.Integrity }}"></script>
   <script src="{{ $timeline.RelPermalink }}" integrity="{{ $timeline.Data.Integrity }}"></script>
+  <script src="{{ $googleDrive.RelPermalink }}" integrity="{{ $googleDrive.Data.Integrity }}"></script>
+  <script src="{{ $store.RelPermalink }}" integrity="{{ $store.Data.Integrity }}"></script>
   <script src="{{ $eventcard.RelPermalink }}" integrity="{{ $eventcard.Data.Integrity }}"></script>
   <script src="{{ $timelineManager.RelPermalink }}" integrity="{{ $timelineManager.Data.Integrity }}"></script>
   <script src="{{ $app.RelPermalink }}" integrity="{{ $app.Data.Integrity }}"></script>

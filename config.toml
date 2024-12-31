@@ -9,6 +9,7 @@ title = 'Timeline Generator'
   favicon = "favicon.ico"
   fullWidthTheme = true
   showLastUpdated = false
+  googleClientId = "103086197912-a1plob9pg1hj4kuk7d5lsn0rcntd8kjg.apps.googleusercontent.com"
 
 [markup]
   [markup.highlight]

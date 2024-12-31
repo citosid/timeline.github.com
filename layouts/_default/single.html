@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timeline Generator</title>
+    {{ $variables := resources.Get "css/variables.css" }}
+    {{ $base := resources.Get "css/base.css" }}
+    {{ $container := resources.Get "css/components/container.css" }}
+    {{ $titlebar := resources.Get "css/components/title-bar.css" }}
+    {{ $form := resources.Get "css/components/form.css" }}
+    {{ $inputs := resources.Get "css/components/inputs.css" }}
+    {{ $buttons := resources.Get "css/components/buttons.css" }}
+    {{ $timelines := resources.Get "css/components/timelines.css" }}
+    
+    {{ $css := slice $variables $base $container $titlebar $form $inputs $buttons $timelines | resources.Concat "css/style.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+
+  <link rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
+</head>
+<body>
+
+  <div id="gated-content">
+    <div class="title-bar">
+      <div class="title-buttons">
+        <div class="title-button minimize"></div>
+        <div class="title-button maximize"></div>
+        <div class="title-button close"></div>
+      </div>
+      <div class="title-text">{{ .Title }}</div>
+      <div class="title-actions">
+      </div>
+    </div>
+
+      <div class="tos">
+        {{ .Content }}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

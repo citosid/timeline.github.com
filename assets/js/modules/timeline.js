@@ -48,7 +48,6 @@ class TimelineEvent {
 
   static fromJSON(json) {
     const { start_date, text, media, group, tags, link, background, bce } = json;
-    l(json);
     return new TimelineEvent({
       date: new Date(`${Math.abs(start_date.year)}-${start_date.month}-${start_date.day}`),
       headline: text.headline,

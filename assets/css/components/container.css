@@ -7,3 +7,12 @@
   border: 1px solid var(--border);
   overflow: auto;
 }
+
+#logged-out-content {
+  padding: 24px;
+  text-align: center;
+}
+
+.tos {
+  padding: 24px;
+}
