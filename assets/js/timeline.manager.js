@@ -19,6 +19,10 @@ class TimelineManager {
     this.timelineTitleElement = document.getElementById('timeline-title');
     this.timelineDescElement = document.getElementById('timeline-desc');
 
+    this.timelineParsedElement = document.getElementById('timeline-parsed');
+
+    this.closeTimelineParsedElement = document.getElementById('close-timeline-parsed');
+
     this.timelineBeingWorkedOn = null;
 
     this.setupEventListeners();
@@ -114,6 +118,10 @@ class TimelineManager {
       event.preventDefault();
       this.generateTimeline();
     });
+    this.closeTimelineParsedElement.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.timelineParsedElement.style.display = 'none';
+    });
   }
 
   removeEvent(element) {
@@ -122,6 +130,7 @@ class TimelineManager {
   }
 
   generateTimeline() {
+    this.timelineParsedElement.style.display = 'block';
     const timelineData = {
       events: this.events.map((card) => {
         return card.getData().toJSON();
