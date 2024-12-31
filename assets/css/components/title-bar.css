@@ -34,3 +34,12 @@
 .title-button.maximize {
   background-color: var(--success);
 }
+
+#generate-timeline-action {
+  position: fixed;
+  top: 33px;
+  right: 37px;
+  font-size: 20px;
+  box-shadow: 5px 5px 11px 1px rgba(0, 0, 0, 0.5);
+  color: var(--base);
+}
