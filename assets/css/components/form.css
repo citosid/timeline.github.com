@@ -10,6 +10,10 @@
   margin-bottom: 10px;
 }
 
+.timeline-header .input-group:first-child {
+  grid-template-columns: 1fr 10fr;
+}
+
 .event-card {
   background: var(--background);
   background-color: var(--card-bg);
@@ -32,7 +36,7 @@
 
 .event-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 3fr 5fr 3fr 3fr;
   gap: 10px;
 }
 
@@ -42,7 +46,12 @@
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-content: center;
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr 10fr;
+}
+
+.input-group:first-child {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }

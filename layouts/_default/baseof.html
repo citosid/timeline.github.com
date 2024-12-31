@@ -28,8 +28,10 @@
       </div>
       <div class="title-text">Timeline Generator</div>
       <div class="title-actions">
+          <div id="loading-spinner" style="display: none;"></div>
           <button id="logout" class="button secondary logout" style="display: none;"> 🚪 Logout</button>
           <button id="login" class="button secondary login"> 🔐 Login</button>
+          <button class="generate-timeline" id="generate-timeline-action" class="button secondary" style="display: none;">📽️ Preview</button>
       </div>
     </div>
 
@@ -45,16 +47,16 @@
       <form id="timeline-form" action="#" style="display: none;">
 
         <div id="back-button" class="button danger">← Back</div>
-        <h3 id="timeline-name">Editing file: <span></span></h3>
+        <h3>🖋️ Editing file: <span id="timeline-name"></span></h3>
 
         <div class="timeline-header">
           <div class="input-group">
-            <label class="input-label" for="timeline-title"> 📅 Timeline Headline</label>
+            <label class="input-label" for="timeline-title"> 📅 Headline</label>
             <input type="text" id="timeline-title" class="input-field">
           </div>
       
           <div class="input-group">
-            <label class="input-label" for="timeline-desc">Timeline Description</label>
+            <label class="input-label" for="timeline-desc">Description</label>
             <textarea id="timeline-desc" class="input-field"></textarea>
           </div>
         </div>
@@ -63,7 +65,7 @@
 
         <div class="button-group">
           <button id="add-event" class="button">Add Event</button>
-          <button id="generate-timeline" class="button secondary">Generate Timeline</button>
+          <button class="generate-timeline" class="button secondary">📽️ Preview</button>
         </div>
       </div>
 
