@@ -16,6 +16,8 @@ class TimelineManager {
   }
 
   async backupTimeline() {
+    if (this.loadingSpinner.style.display === 'block') return;
+
     this.loadingSpinner.style.display = 'block';
     await this.googleDriveService.ensureFolderExists('Timeline');
 
@@ -144,8 +146,11 @@ class TimelineManager {
     this.timelineDesc.value = data.title.text.text;
     this.container.innerHTML = '';
     this.events = data.events.map((eventData) => {
-      const event = TimelineEvent.fromJSON(eventData); // Implement fromJSON
-      const card = new EventCard(event, (el) => this.removeEvent(el)); // Implement EventCard
+      const event = TimelineEvent.fromJSON(eventData);
+      const card = new EventCard(event, (el) => {
+        this.removeEvent(el);
+        this.backupTimeline();
+      });
       this.container.appendChild(card.element);
       return card;
     });
